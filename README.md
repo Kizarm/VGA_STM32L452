@@ -8,7 +8,7 @@ dost na hraně, pro výstup je použito SPI pomocí DMA, časování je však na
 
 ![Propojení hardware](./hardware/connections.png)
 
-Pro ladění (defaultní stav) je v procesotu nahrán do flash krátký kousek kódu z adresáře
+Pro ladění (defaultní stav) je v procesoru nahrán do flash krátký kousek kódu z adresáře
 base-ram. Vlastní kód je pak nahráván do RAM, odkud také běží. Je to jednoduchý hack,
 který umožňuje ladit v RAM a nemusí se čarovat s BOOT options. Lze to dostat i permanentně
 do flash, viz PMD85/flash.patch. I tak kód běží celý z RAM, tj. musí se tam vejít.
