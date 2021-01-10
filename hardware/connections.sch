@@ -1,6 +1,5 @@
 EESchema Schematic File Version 2
 LIBS:connections
-LIBS:connections-cache
 EELAYER 25 0
 EELAYER END
 $Descr A4 11693 8268
@@ -24,7 +23,7 @@ F 1 "VGA_OUT" H 2800 4900 50  0000 C CNN
 F 2 "" H 1850 5975 50  0001 C CNN
 F 3 "" H 1850 5975 50  0001 C CNN
 	1    2800 5575
-	1    0    0    1   
+	1    0    0    -1  
 $EndComp
 $Comp
 L Mini-DIN-6 J2
@@ -123,29 +122,13 @@ Wire Wire Line
 Wire Wire Line
 	2500 5275 2350 5275
 Wire Wire Line
-	2350 5275 2350 5475
-Wire Wire Line
-	2350 5475 2350 5675
-Wire Wire Line
-	2350 5675 2350 5975
-Wire Wire Line
-	2350 5975 2350 6075
-Wire Wire Line
-	2350 6075 2350 6775
+	2350 5075 2350 6775
 Wire Wire Line
 	2500 5475 2350 5475
 Connection ~ 2350 5475
 Wire Wire Line
-	2500 5675 2350 5675
-Connection ~ 2350 5675
-Wire Wire Line
-	2500 5975 2350 5975
+	1425 5975 2500 5975
 Connection ~ 2350 5975
-Wire Wire Line
-	1425 6075 2350 6075
-Wire Wire Line
-	2350 6075 2500 6075
-Connection ~ 2350 6075
 $Comp
 L GND #PWR1
 U 1 1 5FFAF738
@@ -188,11 +171,7 @@ VCC
 Text Label 2975 4050 0    60   ~ 0
 CLK
 Wire Wire Line
-	3250 3775 3250 4150
-Wire Wire Line
-	3250 4150 3250 4425
-Wire Wire Line
-	3250 4425 3250 4475
+	3250 3775 3250 4475
 $Comp
 L GND #PWR2
 U 1 1 5FFB0027
@@ -215,9 +194,7 @@ Wire Wire Line
 Wire Wire Line
 	1575 4825 4125 4825
 Wire Wire Line
-	1575 2725 1575 4150
-Wire Wire Line
-	1575 4150 1575 4700
+	1575 2725 1575 4700
 Wire Wire Line
 	1575 4700 4175 4700
 Wire Wire Line
@@ -226,10 +203,6 @@ Wire Wire Line
 	3725 4050 4175 4050
 Wire Wire Line
 	1675 5175 1425 5175
-Wire Wire Line
-	1425 5175 1425 5575
-Wire Wire Line
-	1425 5575 1425 6075
 Wire Wire Line
 	1425 5575 1675 5575
 Connection ~ 1425 5575
@@ -292,15 +265,11 @@ F 3 "" H 3925 6775 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	3475 5950 3475 6150
-Wire Wire Line
-	3475 6150 3475 6475
+	3475 5950 3475 6475
 Wire Wire Line
 	3475 5950 4175 5950
 Wire Wire Line
-	3850 6150 3925 6150
-Wire Wire Line
-	3925 6150 4175 6150
+	3850 6150 4175 6150
 Wire Wire Line
 	3550 6150 3475 6150
 Connection ~ 3475 6150
@@ -323,9 +292,7 @@ Wire Wire Line
 Wire Wire Line
 	2500 3650 2500 3775
 Wire Wire Line
-	2500 3775 2600 3775
-Wire Wire Line
-	2600 3775 3250 3775
+	2500 3775 3250 3775
 Connection ~ 3250 4150
 Wire Wire Line
 	2600 3650 2600 3775
@@ -399,4 +366,12 @@ Text Notes 5150 2725 3    60   ~ 0
 JP5 - CHANGE CONNECT TO 5-6
 Text Notes 5025 3900 3    60   ~ 0
 POWER:
+Wire Wire Line
+	2500 5075 2350 5075
+Connection ~ 2350 5275
+Wire Wire Line
+	2500 5875 2350 5875
+Connection ~ 2350 5875
+Wire Wire Line
+	1425 5175 1425 5975
 $EndSCHEMATC
