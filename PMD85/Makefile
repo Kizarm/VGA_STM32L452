@@ -15,7 +15,7 @@ SOURCES += Memory.s
 
 SOURCES+= startup.c system.cpp
 # jen pro běh z FLASH - kopíruje vše do RAM a tam to pak běží (skript boot_rwm.ld)
-SOURCES+= flasher.s
+# SOURCES+= flasher.s
 ##########################################################################
 BLD = ./build/
 # VPATH je cesta ke zdrojovým souborům, zde jen hlavní adresář
@@ -62,7 +62,7 @@ OBJDUMP = $(CROSS_COMPILE)objdump
 ##########################################################################
 # Startup files - zde jen skript pro linker
 ##########################################################################
-LD_SCRIPT = boot_rwm.ld
+LD_SCRIPT = boot_ram.ld
 ##########################################################################
 # Nastavení parametrů překladu
 ##########################################################################

@@ -1,0 +1,21 @@
+diff -Naurw PMD85/Makefile PMD_flash/Makefile
+--- PMD85/Makefile	2021-01-10 16:49:21.866855316 +0100
++++ PMD_flash/Makefile	2021-01-10 13:07:43.000000000 +0100
+@@ -15,7 +15,7 @@
+ 
+ SOURCES+= startup.c system.cpp
+ # jen pro běh z FLASH - kopíruje vše do RAM a tam to pak běží (skript boot_rwm.ld)
+-# SOURCES+= flasher.s
++SOURCES+= flasher.s
+ ##########################################################################
+ BLD = ./build/
+ # VPATH je cesta ke zdrojovým souborům, zde jen hlavní adresář
+@@ -62,7 +62,7 @@
+ ##########################################################################
+ # Startup files - zde jen skript pro linker
+ ##########################################################################
+-LD_SCRIPT = boot_ram.ld
++LD_SCRIPT = boot_rwm.ld
+ ##########################################################################
+ # Nastavení parametrů překladu
+ ##########################################################################
