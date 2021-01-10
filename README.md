@@ -16,17 +16,19 @@ Zkoušel jsem dostat do RAM jen kritické části, ale příliš to nepomohlo, c
 asi není dostatečně deterministická a přerušení pak trochu rozmazávají pixely.
 
 ## PMD85
-V tomto adresáři je jednoduchý emulátor PMD85v2A, včetně ptogramů MONITOR2A a BASICGV2A. Je to jen základ,
+V tomto adresáři je jednoduchý emulátor PMD85v2A, včetně programů MONITOR2A a BASICGV2A. Je to jen základ,
 emulace je založena na kódu z [githubu](https://github.com/mborik/GPMD85Emulator). Jde do
 toho přidávat i vlastní programy (BASIC i binárky), ale utilita je jen pro Linux. Možná
 dodělám i nějaké úložiště v hardware, protože mít to připojené k PC je dost nesmysl a bez
-toho je to fakt jen na vyzkoušení, že to fakt chodí.
+toho je to jen na vyzkoušení, že to fakt chodí. I když jde do toho nahrát nějakou hru, snad by to dítě
+na chvíli zabavilo - vidělo by, jakou primitivní zábavu jsme měli za starých časů.
 
 ## Voltmeter
 To je jen taková blbina, ale zajímavě vypadá. Čte to napětí na PA2 a zobrazuje ho
 
 ![Náhled](./Voltmeter/screen.png)
 
-Má to FIR filtr, který napodobí kývání ručičky.
+Má to FIR filtr, který napodobí kývání ručičky. Nastavovat tím nějakou veličinu je opravdu
+příjemnější než při použití digitálního měřidla.
 
 TODO: Textový displej něco jako VT52.
