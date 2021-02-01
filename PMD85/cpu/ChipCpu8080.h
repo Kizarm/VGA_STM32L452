@@ -66,6 +66,7 @@ class ChipCpu8080 { /*: public sigslot::has_slots<>*/
     void AddDevice (PeripheralDevice * dev);
     // "Fi2TTL" listeners
     // sigslot::signal2<int, int> TCyclesListeners;
+    void TCyclesListeners (int, int);
 
     // interupt controller
     void SetInterruptController (InterruptController * intCtrl);

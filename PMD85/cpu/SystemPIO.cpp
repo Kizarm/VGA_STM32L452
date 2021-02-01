@@ -18,12 +18,16 @@
 #include "SystemPIO.h"
 //---------------------------------------------------------------------------
 SystemPIO::SystemPIO (ChipMemory * mem, const BYTE portAddr, const BYTE portMask, const bool needReset)
- : PeripheralDevice(portAddr, portMask, needReset), ChipPIO8255 (false) {
+  : PeripheralDevice (portAddr, portMask, needReset), ChipPIO8255 (false) {
   this->memory = mem;
   /*
     OnCpuReadB.connect(this, &SystemPIO::ReadKeyboardB);
+    OnCpuWriteCH.connect(this, &SystemPIO::WritePaging);
+
   */
+#ifndef __arm__
   ledState = 0;
+#endif
   ShiftStopCtrl = 0;
   for (int ii = 0; ii < (int) sizeof (KeyColumns); ii++)  KeyColumns[ii] = 0;
 }
@@ -94,6 +98,30 @@ BYTE SystemPIO::ReadFromDevice (BYTE port, int /*ticks*/) {
   return retval;
 }
 //---------------------------------------------------------------------------
+#ifdef __arm__
+#include "gpio.h"
+static GpioClass  ledGreen (GpioPortA, 10, GPIO_Mode_OUT);
+#endif
+/**
+ * Method is used as notification function while upper bits of port C are
+ * being written Method handles memory paging.
+ */
+void SystemPIO::WritePaging() {
+  BYTE pg = PeripheralReadByte (PP_PortC);
+  const bool allram = (pg & 16) ? false : true; // ROM/RAM : ROM/RAM
+  // debug ("WritePaging, allram = %s\n", allram ? "true" : "false");
+
+  memory->SetAllRAM (allram);
+  // AllRAM
+#ifdef __arm__
+  if (allram) +ledGreen;
+  else        -ledGreen;
+#else
+  if (allram) ledState |=  LED_BLUE;
+  else        ledState &= ~LED_BLUE;
+#endif //__arm__
+}
+//---------------------------------------------------------------------------
 #ifdef  __thumb__
 #define KEYBOARD_ENGLISH
 typedef uint32_t size_t;
@@ -116,7 +144,7 @@ const KEYMAP SystemPIO::KeyMap[] = {
   { SDL_SCANCODE_1,             0,  2 },     // 1                     0x0016
 #ifdef KEYBOARD_ENGLISH
   { SDL_SCANCODE_Z,             5,  4 },     // Z                     0x001A
-#else  
+#else
   { SDL_SCANCODE_Z,             1, 16 },     // Y                     0x001A
 #endif // KEYBOARD_ENGLISH
   { SDL_SCANCODE_S,             1,  8 },     // S                     0x001B
@@ -290,16 +318,16 @@ void SystemPIO::ScanKeyboard (BYTE * KeyBuffer) {
   // static BYTE keyExchZY, keyExchYZ;
 
   if (KeyBuffer == nullptr) return;
-/*
-  // pressing of ALT/META resets whole matrix because it's used for hotkeys
-  if (KeyBuffer[SDL_SCANCODE_APPLICATION] || KeyBuffer[SDL_SCANCODE_LALT] || KeyBuffer[SDL_SCANCODE_RALT]
-      || KeyBuffer[SDL_SCANCODE_LGUI] || KeyBuffer[SDL_SCANCODE_RGUI]) {
-    for (int ii = 0; ii < (int) sizeof (KeyColumns); ii++)
-      KeyColumns[ii] = 0;
-    ShiftStopCtrl = 0;
-    return;
-  }
-*/
+  /*
+    // pressing of ALT/META resets whole matrix because it's used for hotkeys
+    if (KeyBuffer[SDL_SCANCODE_APPLICATION] || KeyBuffer[SDL_SCANCODE_LALT] || KeyBuffer[SDL_SCANCODE_RALT]
+        || KeyBuffer[SDL_SCANCODE_LGUI] || KeyBuffer[SDL_SCANCODE_RGUI]) {
+      for (int ii = 0; ii < (int) sizeof (KeyColumns); ii++)
+        KeyColumns[ii] = 0;
+      ShiftStopCtrl = 0;
+      return;
+    }
+  */
 
   int bi = 0;
   // ********** PMD 85 **********
@@ -319,7 +347,7 @@ void SystemPIO::ScanKeyboard (BYTE * KeyBuffer) {
 }
 #endif // 0
 // tahle neprůhledná konstrukce je modernější obdoba makra jako je sizeof array / sizeof member
-template<class T, size_t N> constexpr size_t array_len (T (&)[N]) { return N; }
+template<class T, size_t N> constexpr size_t array_len (T (&) [N]) { return N; }
 // metoda bisekce bude asi efektivnejsi, pole je setridene podle vkey
 int SystemPIO::range (const SDL_SCAN_CODES x) const {
   int l = 0, r = array_len (KeyMap) - 1;
@@ -327,7 +355,7 @@ int SystemPIO::range (const SDL_SCAN_CODES x) const {
   while (l <= r) {
     const int s = (l + r) >> 1;
     const SDL_SCAN_CODES x0 = KeyMap [s].vkey;
-    if      (x0 < x) l = s + 1;
+    if (x0 < x) l = s + 1;
     else if (x0 > x) r = s - 1;
     else return s;
   }
@@ -355,7 +383,7 @@ void SystemPIO::KeyBoardAsync (const SDL_SCAN_CODES code, const bool pressed) {
       else         KeyColumns [ci] &= ~bi;
     } else {
       debug ("Unsupported code 0x%08X\n", code);
-    }  
+    }
   }
 }
 

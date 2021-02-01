@@ -36,7 +36,7 @@ void usbd_endpoint0::evt_handler (usbd_events event, uint8_t ep) {
     break;
   }
 }
-
+extern volatile unsigned g_usb_address_ready;
 /** \brief Callback that sets USB device address
  * \param dev pointer to usb device
  * \param req pointer to usb control request data
@@ -45,6 +45,9 @@ void usbd_endpoint0::evt_handler (usbd_events event, uint8_t ep) {
 static void usbd_set_address (usbd_device *dev, usbd_ctlreq *req) {
   dev->setaddr (req->wValue);
   dev->status.device_state = (req->wValue) ? usbd_state_addressed : usbd_state_default;
+#if USB_CHECK
+  g_usb_address_ready = 1u;
+#endif
 }
 /**********************************************************************************************/
 /** \brief Resets USB device state

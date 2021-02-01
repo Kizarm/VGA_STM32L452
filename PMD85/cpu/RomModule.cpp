@@ -17,10 +17,10 @@
 //---------------------------------------------------------------------------
 #include <string.h>
 #include "RomModule.h"
+#include "ff.h"
 //---------------------------------------------------------------------------
 RomModule::RomModule (const BYTE portAddr, const BYTE portMask, const bool needReset)
   : PeripheralDevice (portAddr, portMask, needReset), ChipPIO8255 (false) {
-  RomPack = nullptr;
   lenRom  = 0u;
   ofsRom  = 0u;
   // OnCpuReadA.connect (this, &RomModule::ReadFromRom);
@@ -89,13 +89,15 @@ BYTE RomModule::ReadFromDevice (BYTE port, int) {
   return retval;
 }
 //---------------------------------------------------------------------------
-bool RomModule::InsertRom (BYTE addressKB, BYTE sizeKB, const BYTE * src) {
-  if (addressKB >= ROM_PACK_SIZE_KB || sizeKB == 0 || (addressKB + sizeKB)  > ROM_PACK_SIZE_KB)  return false;
-
-  ofsRom  = addressKB * 1024u;
-  lenRom  = sizeKB    * 1024;
-  RomPack = src;
-  return true;
+void RomModule::InsertFile (const char * filename) {
+  FIL handle;
+  if (f_open (&handle, filename, FA_READ) != FR_OK) return;
+  const unsigned to_read = ROM_PACK_SIZE - lenRom;
+  unsigned readen = 0u;
+  f_read (&handle, RomPack + lenRom, to_read, &readen);
+  debug ("readen 0x%04X bytes from file \"%s\"\n", readen, filename);
+  lenRom += readen;
+  f_close(&handle);
 }
 //---------------------------------------------------------------------------
 void RomModule::ReadFromRom() {
@@ -104,13 +106,11 @@ void RomModule::ReadFromRom() {
   addr  =         PeripheralReadByte (PP_PortB);
   addr |= (WORD) (PeripheralReadByte (PP_PortC) << 8);
   addr -= ofsRom;
-  // debug ("Read %04X\n", addr);
-  if (!RomPack) {
-    PeripheralWriteByte (PP_PortA, 0xFF);
-    return;
-  }
+  
+  const BYTE db = RomPack [addr];
+  // debug ("Read from %04X %02X\n", addr, db);
 
   if (addr >= lenRom) PeripheralWriteByte (PP_PortA, 0xFF);
-  else                PeripheralWriteByte (PP_PortA, RomPack [addr]);
+  else                PeripheralWriteByte (PP_PortA, db);
 }
 //---------------------------------------------------------------------------

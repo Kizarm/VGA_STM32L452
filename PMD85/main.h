@@ -9,7 +9,6 @@
 #include "vhsync.h"
 #include "keyboard.h"
 #include "PMD85v2A.h"
-#include "loader.h"
 /**
  * @mainpage PMD85 emulátor na STM32L452.
  * 
@@ -20,9 +19,6 @@
  * celkem dost, není to problém. I když jsem se pokusil časově kritickou část přenést do RAM
  * (i když ostatní běží z FLASH), stále to není úplně stabilní, i když se to o něco zlepšilo.
  * 
- * Protože dopsat potřebné periferie bude dost obtížné, pro pokusy lze programy z PC nahrát
- * do paměti externě utilitou load (adresář utils). Lze nahrát binární data od adresy 0,
- * hexadecimální si počáteční adresu určí samy a fungují i textové programy v jazyce BASIC.
  * V tomto stadiu je to tedy jen hračka, která ukazuje, že to nějak jde. Samozřejmě v dnešní
  * době by bylo možné použít rychlejší procesor s větší pamětí a pomocí např. QSPI do toho
  * dostat i barvy, ale válel se mi doma nepotřebný Nucleo kit a VGA monitor, tak jsem si pohrál.

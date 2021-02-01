@@ -42,26 +42,12 @@ static Filtr fir;
 
 extern "C" void SysTick_Handler () {
 }
-static usbd_device udev;
-static cdc_class   cdc_acm (udev);
 static VgaWrap     display;
 static AdcClass    adc;
-
-static void cdc_print (const uint32_t value) {
-  const unsigned len = 64;
-  char buffer [len];
-  const int res = msnprintf (buffer, len, "%04X\r\n", value);
-  cdc_acm.Down(buffer, res);
-}
 
 int main (void) {
   EnableDebugOnSleep();
   adc.Init();
-  udev.attach (cdc_acm);
-  cdc_acm.init();
-  display += cdc_acm;
-  //SysTick_Config (SystemCoreClock / 1000);
-  // display.block();
   
   display.display();
   
@@ -70,7 +56,6 @@ int main (void) {
   for (;;) {
     uint16_t td;
     if (adc.get(td)) {
-      cdc_print ((uint32_t) td);
       sum += fir.run ((float) td);
       if (cnt >= 10) {
         cnt = 0u;

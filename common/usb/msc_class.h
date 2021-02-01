@@ -105,7 +105,7 @@ struct MSC_CSW {
 /* Max In/Out Packet Size */
 #define MSC_MAX_PACKET  64
 /* Mass Storage Memory Layout */
-#define MSC_BlockSize   512
+#define MSC_BlockSize   4096
 
 /* SCSI Sense Key/Additional Sense Code/ASC Qualifier values */
 #define SS_NO_SENSE                           0x000000  // to je sice blbost, nicmene alespon neco to dela
@@ -177,7 +177,7 @@ class MsClass : public usbd_interface {
     usbd_respond if_ctl (usbd_ctlreq *req);
     usbd_respond if_dsc (usbd_ctlreq *req, void **address, uint16_t *dsize);
   public:
-    void Attach (StorageBase & base, bool readonly = false) {
+    void attach (StorageBase & base, bool readonly = false) {
       mmc = & base;
       base.parent = this;
       ReadOnly = readonly;

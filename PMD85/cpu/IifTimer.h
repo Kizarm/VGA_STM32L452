@@ -46,6 +46,8 @@ class IifTimer : public PeripheralDevice, public ChipPIT8253 {
     void ITimerService   (int ticks, int dur);
     void Timer0OutChange (TPITCounter cnt, bool out);
     void CT2Clock        (TPITCounter cnt, bool out);
+    
+    static void ITimerServiceStatic (int ticks, int dur);
 
   private:
     ChipCpu8080 *  cpu;

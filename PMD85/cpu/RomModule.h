@@ -30,8 +30,8 @@
 #define ROM_MODULE_REG_C      0x8A
 #define ROM_MODULE_REG_CWR    0x8B
 
-#define ROM_PACK_SIZE_KB      32
-#define ROM_PACK_SIZE         (ROM_PACK_SIZE_KB * 1024)
+static constexpr unsigned ROM_PACK_SIZE_KB    =  16;
+static constexpr unsigned ROM_PACK_SIZE       =  (ROM_PACK_SIZE_KB * 1024);
 //---------------------------------------------------------------------------
 class RomModule: public PeripheralDevice, public ChipPIO8255 {
   public:
@@ -41,9 +41,7 @@ class RomModule: public PeripheralDevice, public ChipPIO8255 {
     virtual void WriteToDevice (BYTE port, BYTE value, int ticks);
     virtual BYTE ReadFromDevice (BYTE port, int ticks);
 
-    bool InsertRom (BYTE addressKB, BYTE sizeKB, const BYTE * src);
-    //void RemoveRom (BYTE addressKB, BYTE sizeKB);
-    //void RemoveRomPack();
+    void InsertFile (const char * filename);
 
     void ReadFromRom();
     void OnCpuReadA () override {
@@ -51,8 +49,8 @@ class RomModule: public PeripheralDevice, public ChipPIO8255 {
     };
 
   private:
-    const BYTE * RomPack;
-    unsigned     lenRom, ofsRom;
+    BYTE     RomPack [ROM_PACK_SIZE];
+    unsigned lenRom, ofsRom;
 };
 //---------------------------------------------------------------------------
 #endif

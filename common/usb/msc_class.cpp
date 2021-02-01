@@ -454,7 +454,7 @@ void MsClass::MSC_Inquiry (void) {
   bytecopy (BulkBuf + i, hdr, j);
   i += j;
   j  = 28;
-  bytecopy (BulkBuf + i, "Mrazik. SDHC Card on USB 1.0", j);
+  bytecopy (BulkBuf + i, "Kizarm. SPI NOR flash on USB", j);
   i += j;
   BulkBuf [4] = i - 4;
   BulkLen     = i;

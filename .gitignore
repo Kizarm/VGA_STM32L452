@@ -9,3 +9,7 @@
 *.hex
 **/build/*
 **/debug/*
+PMD85/cpu/image/create_new
+PMD85/cpu/image/disk.img
+common/stm32l4/ld/libcpu.a
+

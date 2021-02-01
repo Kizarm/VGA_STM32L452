@@ -1,6 +1,8 @@
 #include "ChipMemory.h"
+#include "ff.h"
 
 ChipMemory::ChipMemory() {
+  allRAM = false;
 }
 void ChipMemory::ResetOn() {
 }
@@ -28,12 +30,19 @@ void ChipMemory::WriteWord (int physAddr, WORD value) {
 BYTE * ChipMemory::FindPointer (int physAddr, OPERATIONS ops) {
   if (physAddr >= 0 && physAddr <= 0xFFFF) {
     const int mapAddr = physAddr;
-    if ((mapAddr >= 0x8000) and (mapAddr < 0x9000) and (ops == OP_WRITE)) return nullptr;
+    // tohle hlidani zapisu do oblasti monitoru mozna neni potreba, ale delalo bez nej blbosti, zase vadi u MIKROS
+    if ((allRAM == false) and (ops == OP_WRITE) and (mapAddr >= 0x8000) and (mapAddr < 0x9000)) return nullptr;
     return memory_data + mapAddr;
   }
   return nullptr;
 }
-void ChipMemory::atach (const uint8_t * rom, const unsigned int len, const unsigned int offset) {
+void ChipMemory::atach (const char * filename, const unsigned int offset) {
   uint8_t * dest = memory_data + offset;
-  for (unsigned n=0; n<len; n++) dest [n] = rom [n];
+  FIL handle;
+  if (f_open (&handle, filename, FA_READ) != FR_OK) return;
+  const unsigned to_read = PmdMemorySize - offset;
+  unsigned readen = 0u;
+  f_read (&handle, dest, to_read, &readen);
+  debug ("readen 0x%04X bytes from file \"%s\"\n", readen, filename);
+  f_close(&handle);
 }

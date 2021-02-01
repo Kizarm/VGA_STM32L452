@@ -7,15 +7,16 @@ OUTPUT = ../common/$(TARGET)/ld/libcpu
 # S/C/C++ files
 #SOURCES += Memory.s
 SOURCES += ChipCpu8080.cpp ChipMemory.cpp ChipPIO8255.cpp ChipUSART8251.cpp ChipPIT8253.cpp SystemPIO.cpp
-SOURCES += IifGPIO.cpp IifTape.cpp IifTimer.cpp RomModule.cpp
+SOURCES += IifTape.cpp IifTimer.cpp RomModule.cpp
+SOURCES += IifGPIO.cpp IifTape.cpp IifTimer.cpp RomModule.cpp Pmd32.cpp
 SOURCES += PMD85v2A.cpp
 
 ##########################################################################
 BLD = ./build/
 # VPATH je cesta ke zdrojovým souborům, zde jen hlavní adresář
-VPATH = ./ ../$(TARGET)
+VPATH = ./
 # A cesty k hlavičkám
-INCLUDE_PATHS = ./ ../
+INCLUDE_PATHS = ./ ../ ../common ../common/$(TARGET) ../common/cmsis
 ##########################################################################
 # GNU GCC OR clang compiler - verze pro ARM - crosscompiler
 ##########################################################################

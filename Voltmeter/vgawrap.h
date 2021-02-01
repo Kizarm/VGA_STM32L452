@@ -1,21 +1,16 @@
 #ifndef VGAWRAP_H
 #define VGAWRAP_H
 
-#include "baselayer.h"
-#include "fifo.h"
-//#include "vgaprint.h"
 #include "vhsync.h"
 #include "canvas.h"
 
-class VgaWrap : public BaseLayer {
+class VgaWrap {
   VHSync          sync;
   uint8_t       * pVideoRAM;    // placeholder
-  //VgaPrint        print;
   Canvas          canvas;
   volatile bool   disable;
   public:
     VgaWrap();
-    uint32_t    Up   (const char * data, uint32_t len);
     
     void block   () {
       while (disable);

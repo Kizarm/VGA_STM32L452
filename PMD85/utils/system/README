@@ -1,0 +1,13 @@
+Základní moduly pro práci s PMD85.
+Jsou tp po Internetu posháněné výpisy v assembleru, upravené pro překlad
+pomocí GNU binutils. Podařilo se úspěšně převést tyto moduly:
+ - monit2.rom, resp. monit2.rom (liší se, ale málo) - základní monitor
+ - basic2A.rmm                                      - basic interpretr
+ - loader32.rmm                                     - ovladač disketové
+ jednotky, který umí natáhnout MIKROS z diskety, příp. zavést basic.
+
+Pozn.
+Makefile používají upravená jména binutils utilit jako je
+as-z80 místo z80-none-elf-as
+ld-z80       z80-none-elf-ld
+atd ...

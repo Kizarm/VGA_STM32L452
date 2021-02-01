@@ -103,8 +103,12 @@ class ChipPIO8255 { /*: public sigslot::has_slots<>*/
       sigslot::signal0<> OnCpuReadCWR;
       sigslot::signal1<BYTE> OnCpuWriteCWR;
     */
-    virtual void OnCpuReadA () {};
-    virtual void OnCpuReadB () {};
+    virtual void OnCpuReadA   () {};
+    virtual void OnCpuReadB   () {};
+    virtual void OnCpuWriteC  () {};
+    virtual void OnCpuWriteCH () {};
+    virtual void OnCpuWriteCL () {};
+    virtual void OnCpuWriteCWR(BYTE) {};
   protected:
     // CPU state
     void ChipReset (bool clearNotifyFunc);

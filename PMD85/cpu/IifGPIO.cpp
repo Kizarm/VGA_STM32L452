@@ -26,6 +26,7 @@ IifGPIO::IifGPIO (const BYTE portAddr, const BYTE portMask, const bool needReset
   OnAfterResetA.disconnect_all();
   OnAfterResetB.disconnect_all();
   */
+  pPmd32 = nullptr;
 }
 //---------------------------------------------------------------------------
 // metody zdedene z triedy PeripheralDevice
@@ -35,15 +36,15 @@ IifGPIO::IifGPIO (const BYTE portAddr, const BYTE portMask, const bool needReset
  */
 void IifGPIO::ResetDevice (int ticks) {
   currentTicks = ticks;
-  /*
-    OnBeforeResetA();
-    OnBeforeResetB();
-  */
+  
+  OnBeforeResetA();
+  OnBeforeResetB();
+  
   ChipReset (false);
-  /*
-    OnAfterResetA();
-    OnAfterResetB();
-  */
+  
+  OnAfterResetA();
+  OnAfterResetB();
+  
 }
 //---------------------------------------------------------------------------
 /**
@@ -69,6 +70,7 @@ void IifGPIO::WriteToDevice (BYTE port, BYTE value, int ticks) {
     CpuWrite (PP_CWR, value);
     break;
   }
+  // debug ("WriteToDevice %02X -> %02X\n", port, value);
 }
 //---------------------------------------------------------------------------
 /**
@@ -100,6 +102,7 @@ BYTE IifGPIO::ReadFromDevice (BYTE port, int ticks) {
     retval = 0xFF;
     break;
   }
+  // debug ("ReadFromDevice %02X -> %02X\n", port, retval);
 
   return retval;
 }
@@ -120,3 +123,23 @@ bool IifGPIO::ReadBit (TPIOPort src, TPIOPortBit bit) {
   return PeripheralReadBit (src, bit);
 }
 //---------------------------------------------------------------------------
+#include "Pmd32.h"
+void IifGPIO::OnCpuWriteCH() {
+  if (pPmd32) pPmd32->OnHandshake();
+}
+void IifGPIO::OnCpuWriteCWR (BYTE b) {
+  if (pPmd32) pPmd32->OnSetMode2 (b);
+}
+///////////////////////////////////////////
+void IifGPIO::OnAfterResetA() {
+  if (pPmd32) pPmd32->AfterReset();
+}
+void IifGPIO::OnAfterResetB() {
+
+}
+void IifGPIO::OnBeforeResetA() {
+  if (pPmd32) pPmd32->BeforeReset();
+}
+void IifGPIO::OnBeforeResetB() {
+
+}

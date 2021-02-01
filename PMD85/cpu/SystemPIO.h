@@ -61,12 +61,17 @@ class SystemPIO : public PeripheralDevice, public ChipPIO8255 {
     /* budeme volat externe, klavesnice sdili pamet - KeyColumns[], to je vse */
     void KeyBoardAsync (const SDL_SCAN_CODES code, const bool pressed);
     // void ScanKeyboard (BYTE * keybuf);
+    void WritePaging();
     /* nahrada signal - slot ??? */
     void OnCpuReadB () override {
       ReadKeyboardB();
     }
-
+    void OnCpuWriteCH () override {
+      WritePaging();
+    }
+#ifndef __arm__
     BYTE ledState;
+#endif // __arm__
   private:
     int  range (const SDL_SCAN_CODES x) const;
     void ReadKeyboardB();

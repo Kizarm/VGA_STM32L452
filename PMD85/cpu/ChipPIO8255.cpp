@@ -16,8 +16,10 @@
 */
 //---------------------------------------------------------------------------
 #include "ChipPIO8255.h"
+/*
 #undef  debug
 #define debug(...)
+*/
 /**
  * Constructor creates object for PIO 8255 chip.
  * Corresponds to Power-up state, default state after connecting the power.
@@ -131,20 +133,18 @@ void ChipPIO8255::SetChipState (BYTE *buffer) {
  * @param oldVal povodna hodnota na vystupe portu C
  * @param newVal nova hodnota posielana na vystup portu C
  */
-void ChipPIO8255::NotifyOnWritePortC (BYTE /*oldVal*/, BYTE /*newVal*/) {
-  /*
+void ChipPIO8255::NotifyOnWritePortC (BYTE oldVal, BYTE newVal) {
+  // debug ("NotifyOnWritePortC oldVal=%02X, newVal=%02X\n", oldVal, newVal);
+  
   BYTE val;
 
   val = oldVal ^ newVal;
-  if (val && OnCpuWriteC.isset())
-    OnCpuWriteC();
-  else {
-    if ( (val & 0xF0) && OnCpuWriteCH.isset())
-      OnCpuWriteCH();
-    if ( (val & 0x0F) && OnCpuWriteCL.isset())
-      OnCpuWriteCL();
-  }
-  */
+  //if (val /*&& OnCpuWriteC.isset()*/)                   OnCpuWriteC(); // OnCpuWriteC not set
+  //else {
+    if ( (val & 0xF0) /*&& OnCpuWriteCH.isset()*/)      OnCpuWriteCH();
+    if ( (val & 0x0F) /*&& OnCpuWriteCL.isset()*/)      OnCpuWriteCL();
+  //}
+  
 }
 //---------------------------------------------------------------------------
 /**
@@ -161,7 +161,7 @@ void ChipPIO8255::NotifyOnWritePortC (BYTE /*oldVal*/, BYTE /*newVal*/) {
  * @param val hodnota posielana na dany port
  */
 void ChipPIO8255::CpuWrite (TPIOPort dest, BYTE val) {
-  debug ("ChipPIO8255::CpuWrite %d <- %02X\n", (int) dest, val);
+  // debug ("ChipPIO8255::CpuWrite %d <- %02X\n", (int) dest, val);
   BYTE oldVal;
   BYTE mode;
 
@@ -245,7 +245,7 @@ void ChipPIO8255::CpuWrite (TPIOPort dest, BYTE val) {
       InteAout = false;
       InteB = false;
 
-      // OnCpuWriteCWR (CWR);
+      OnCpuWriteCWR (CWR);
       /*
               if ((CWR & (GB_MODE | PORTCL_DIR)) == (GB_MODE0 | PORTCL_OUT)
                   && (CWR & (GA_MODE | PORTCH_DIR)) == (GA_MODE0 | PORTCH_OUT))
@@ -487,13 +487,13 @@ BYTE ChipPIO8255::CpuRead (TPIOPort src) {
     ret_val = 0;
     break;
   }
-  debug ("ChipPIO8255::CpuRead  %d <- %02X\n", (int) src, ret_val);
+  // debug ("ChipPIO8255::CpuRead  %d <- %02X\n", (int) src, ret_val);
 
   return ret_val;
 }
 //---------------------------------------------------------------------------
 void ChipPIO8255::PeripheralWriteByte (TPIOPort dest, BYTE val) {
-  debug ("ChipPIO8255 PeripheralWriteByte %d <- %02X\n", (int) dest, val);
+  // debug ("ChipPIO8255 PeripheralWriteByte %d <- %02X\n", (int) dest, val);
   BYTE oldVal;
 
   switch (dest) {
@@ -624,7 +624,7 @@ void ChipPIO8255::PeripheralChangeBit (TPIOPort dest, TPIOPortBit bit, bool stat
 }
 //---------------------------------------------------------------------------
 BYTE ChipPIO8255::PeripheralReadByte (TPIOPort src) {
-  debug ("ChipPIO8255 PeripheralReadByte : %d\n", (int) src);
+  // debug ("ChipPIO8255 PeripheralReadByte : %d\n", (int) src);
   BYTE ret;
 
   switch (src) {

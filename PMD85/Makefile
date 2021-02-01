@@ -3,15 +3,14 @@
 # jednoduše tak, že zadáme jméno výstupu a vstupní objekty.
 ##########################################################################
 TARGET = stm32l4
-OUTPUT = vga
+OUTPUT = pmd
 # S/C/C++ files
 SOURCES+= main.cpp
-SOURCES+= intelhex.cpp
-SOURCES+= loader.cpp
 SOURCES+= gpio.cpp
+SOURCES+= spiclass.cpp
 SOURCES+= vhsync.cpp
 SOURCES+= keyboard.cpp
-SOURCES += Memory.s
+SOURCES+= ff.c diskopsbase.cpp diskopsfile.cpp serialflash.cpp
 
 SOURCES+= startup.c system.cpp
 # jen pro běh z FLASH - kopíruje vše do RAM a tam to pak běží (skript boot_rwm.ld)
@@ -67,7 +66,7 @@ LD_SCRIPT = boot_ram.ld
 # Nastavení parametrů překladu
 ##########################################################################
 # 1.Překlad pomocí gcc / g++
-DEFINES = USE_USB=1
+# DEFINES = USE_USB=1
 # Podmineny preklad, cesta k hlavičkám
 CFLAGS += $(addprefix -D,$(DEFINES)) $(addprefix -I,$(INCLUDE_PATHS))
 #MFLAGS = -m32
@@ -91,7 +90,7 @@ LDFLAGS+= --gc-sections
 # od verze 2.26 binutils
 #LDFLAGS+= --print-memory-usage
 # Vlastní použití linker skriptu
-LDLIBS  = -L./common/$(TARGET)/ld -T $(LD_SCRIPT) -lusb -lcpu
+LDLIBS  = -L./common/$(TARGET)/ld -T $(LD_SCRIPT) -lcpu
 # 3. Ostatní
 # Assembler nepotřebuje žádné parametry, pokud je vše ve zdrojovém textu
 ASFLAGS =
@@ -125,19 +124,19 @@ BOBJS  = $(addprefix $(BLD),$(OBJS))
 # Výsledek všeho (all) má být soubor *.elf - z něj se odvodí další
 all: $(BLD) $(OUTPUT).elf
 
-./common/$(TARGET)/ld/libusb.a:
-	cd ./common/usb && $(MAKE) all
+#./common/$(TARGET)/ld/libusb.a:
+#	cd ./common/usb && $(MAKE) all
 ./common/$(TARGET)/ld/libcpu.a:
 	cd ./cpu && $(MAKE) all
 # Ten je závislý na objektech $(OBJS) : po jeho vytvoření lze udělat hex, bin atd...
-$(OUTPUT).elf: $(BOBJS) ./common/$(TARGET)/ld/libusb.a ./common/$(TARGET)/ld/libcpu.a
+$(OUTPUT).elf: $(BOBJS) ./common/$(TARGET)/ld/libcpu.a
 	$(LD) $(LDMODS) -o $(OUTPUT).elf $(BOBJS) $(LDLIBS)
 	-@echo "size:"
 	$(SIZE) $(OUTPUT).elf
 	-@echo "listing:"
 	$(OBJDUMP) -d $(OUTPUT).elf > $(OUTPUT).lst
+	$(OBJCOPY) $(OCFLAGS) -O binary $(OUTPUT).elf $(OUTPUT).bin
 #	$(OBJCOPY) $(OCFLAGS) -O ihex   $(OUTPUT).elf $(OUTPUT).hex
-#	$(OBJCOPY) $(OCFLAGS) -O binary $(OUTPUT).elf $(OUTPUT).bin
 	-@echo "OK."
 # Divná makra $@ $< lze najít v dokumentaci make
 # Každý objekt *.o je závislý na zdroji - zde *.c

@@ -20,6 +20,7 @@
 //---------------------------------------------------------------------------
 #include "Globals.h"
 #include "ChipPIO8255.h"
+//#include "Pmd32.h"
 //---------------------------------------------------------------------------
 #define IIF_GPIO_MASK       0xFC
 #define IIF_GPIO_ADR        0x4C
@@ -30,6 +31,7 @@
 #define IIF_GPIO_REG_C      0x4E
 #define IIF_GPIO_REG_CWR    0x4F
 //---------------------------------------------------------------------------
+class Pmd32;
 class IifGPIO : public PeripheralDevice, public ChipPIO8255 {
   public:
     IifGPIO (const BYTE portAddr, const BYTE portMask, const bool needReset);
@@ -43,6 +45,17 @@ class IifGPIO : public PeripheralDevice, public ChipPIO8255 {
       sigslot::signal0<> OnAfterResetA;
       sigslot::signal0<> OnAfterResetB;
     */
+    void OnAfterResetA ();
+    void OnAfterResetB ();
+    void OnBeforeResetA ();
+    void OnBeforeResetB ();
+    
+    void Attach (Pmd32 * p) {
+      pPmd32 = p;
+    }
+    
+    void OnCpuWriteCWR (BYTE ) override;
+    void OnCpuWriteCH  () override;
     
     void WriteByte (TPIOPort dest, BYTE val);
     BYTE ReadByte  (TPIOPort src);
@@ -53,6 +66,7 @@ class IifGPIO : public PeripheralDevice, public ChipPIO8255 {
 
   private:
     int currentTicks;
+    Pmd32 * pPmd32;
 };
 //---------------------------------------------------------------------------
 #endif

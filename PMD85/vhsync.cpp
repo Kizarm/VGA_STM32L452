@@ -151,7 +151,7 @@ static inline void TimerInit () {
   out.setPuPd(GPIO_PuPd_DOWN);
   RCC.APB1ENR1.B.TIM2EN = 1u;
   VHTIM.PSC      = 1u;       // 36 MHz
-  VHTIM.ARR.R    = 1022u;    // total, 1022 je zrejme spravne
+  VHTIM.ARR.R    = 1023u;    // total, 1022 je zrejme spravne
   VHTIM.EGR.B.UG = 1u;
   VHTIM.CCMR1_Output.modify([] (TIM_CCMR1_Output_s & r) -> auto {
     r.B.OC1PE = 1u;

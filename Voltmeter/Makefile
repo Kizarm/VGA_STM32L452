@@ -7,9 +7,9 @@ OUTPUT = vga
 # S/C/C++ files
 SOURCES+= main.cpp
 SOURCES+= gpio.cpp
-SOURCES+= cdc_class.cpp
-SOURCES+= usbd_core.cpp
-SOURCES+= usbd_fs.cpp
+#SOURCES+= cdc_class.cpp
+#SOURCES+= usbd_core.cpp
+#SOURCES+= usbd_fs.cpp
 SOURCES+= vhsync.cpp
 SOURCES+= vgawrap.cpp
 SOURCES+= canvas.cpp
@@ -68,7 +68,7 @@ LD_SCRIPT = boot_ram.ld
 # Nastavení parametrů překladu
 ##########################################################################
 # 1.Překlad pomocí gcc / g++
-DEFINES = USE_USB=1
+# DEFINES = USE_USB=1
 # Podmineny preklad, cesta k hlavičkám
 CFLAGS += $(addprefix -D,$(DEFINES)) $(addprefix -I,$(INCLUDE_PATHS))
 #MFLAGS = -m32
@@ -133,8 +133,8 @@ $(OUTPUT).elf: $(BOBJS)
 	$(SIZE) $(OUTPUT).elf
 	-@echo "listing:"
 	$(OBJDUMP) -d $(OUTPUT).elf > $(OUTPUT).lst
+	$(OBJCOPY) $(OCFLAGS) -O binary $(OUTPUT).elf $(OUTPUT).bin
 #	$(OBJCOPY) $(OCFLAGS) -O ihex   $(OUTPUT).elf $(OUTPUT).hex
-#	$(OBJCOPY) $(OCFLAGS) -O binary $(OUTPUT).elf $(OUTPUT).bin
 	-@echo "OK."
 # Divná makra $@ $< lze najít v dokumentaci make
 # Každý objekt *.o je závislý na zdroji - zde *.c
@@ -155,5 +155,5 @@ clean:
 	rm -f $(BLD)* *.map *.lst *.elf *.hex *.bin
 # debug bude jen mít definováno něco navíc
 
-.PHONY: all clean
+.PHONY: all clean $(BLD)
 #-include makefile.inc

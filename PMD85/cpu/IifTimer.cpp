@@ -14,12 +14,20 @@
     You should have received a copy of the GNU General Public License
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
+// cpu->TCyclesListeners.connect(ifTimer, &IifTimer::ITimerService);
 //---------------------------------------------------------------------------
 #include "IifTimer.h"
 //#include "CommonUtils.h"
 //---------------------------------------------------------------------------
+static IifTimer * IifTimerInstance = nullptr;
+void IifTimer::ITimerServiceStatic (int ticks, int dur) {
+  if (IifTimerInstance) IifTimerInstance->ITimerService (ticks, dur);
+}
+
+//---------------------------------------------------------------------------
 IifTimer::IifTimer (ChipCpu8080 *_cpu, const BYTE portAddr, const BYTE portMask, const bool needReset)
   : PeripheralDevice (portAddr, portMask, needReset), ChipPIT8253() {
+  IifTimerInstance = this;
 
   cntRtc = 0;
   stateRtc = true;
@@ -97,7 +105,7 @@ void IifTimer::ITimerService (int ticks, int dur) {
       PeripheralSetClock (CT_2, stateRtc);
     }
 
-    // Timer T1 - clock for USART
+    // Timer T1 - clock for USART - tohle bude hlavní brzda, USART není použit, nicméně nejde to vyhodit
     for (int ii = 0; ii < dur; ii++) {
       PeripheralSetClock (CT_1, true);
       PeripheralSetClock (CT_1, false);

@@ -286,7 +286,7 @@ int ChipCpu8080::DoInstruction() {
     fetchCounter++;
   }
 
-  // TCyclesListeners(countTCycles, lastInstrTCycles);
+  TCyclesListeners(countTCycles, lastInstrTCycles);
 
   switch (opcode) {
   case 0x00: // NOP
@@ -1462,3 +1462,11 @@ void ChipCpu8080::CountIntCycles() {
   }
 }
 //---------------------------------------------------------------------------
+#include "Pmd32.h"
+#include "IifTimer.h"
+void ChipCpu8080::TCyclesListeners (int ticks, int dur) {
+#ifndef __arm__
+    IifTimer::ITimerServiceStatic (ticks, dur);   // TODO : ku podivu tohle dost brzdí emulaci, bohužel některé hry (Sudoku...) to potřebují
+#endif // __arm__
+    Pmd32::Disk32ServiceStatic    (ticks, dur);
+}

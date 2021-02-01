@@ -1,0 +1,4 @@
+#!/bin/bash
+rm -f test.p32
+unzip template.zip
+./cim test.p32 -a './files/*.*'
