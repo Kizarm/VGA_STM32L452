@@ -2,6 +2,7 @@
 .kde*
 *.kdev4
 
+*.o
 *.elf
 *.lst
 *.map
