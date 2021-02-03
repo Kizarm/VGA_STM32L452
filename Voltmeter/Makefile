@@ -155,5 +155,5 @@ clean:
 	rm -f $(BLD)* *.map *.lst *.elf *.hex *.bin
 # debug bude jen mít definováno něco navíc
 
-.PHONY: all clean $(BLD)
+.PHONY: all clean
 #-include makefile.inc

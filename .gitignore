@@ -12,4 +12,9 @@
 PMD85/cpu/image/create_new
 PMD85/cpu/image/disk.img
 common/stm32l4/ld/libcpu.a
+hardware/VgaOnSTM32L452-cache.lib
+hardware/VgaOnSTM32L452.bak
+hardware/VgaOnSTM32L452.kicad_pcb-bak
+hardware/VgaOnSTM32L452.net
+hardware/sym-lib-table
 

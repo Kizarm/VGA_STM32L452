@@ -1,4 +1,4 @@
-update=Út 12. leden 2021, 17:07:56 CET
+update=Po 1. únor 2021, 21:49:44 CET
 version=1
 last_client=kicad
 [pcbnew]
@@ -38,5 +38,3 @@ LabSize=60
 [eeschema]
 version=1
 LibDir=
-[eeschema/libraries]
-LibName1=VgaOnSTM32L452

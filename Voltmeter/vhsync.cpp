@@ -110,7 +110,7 @@ static inline void TimerInit () {
   out.setSpeed(GPIO_Speed_HS);
   RCC.APB1ENR1.B.TIM2EN = 1u;
   TIM2.PSC      = 1u;       // 36 MHz
-  TIM2.ARR.R    = 1022u;    // total, 1022 je zrejme spravne
+  TIM2.ARR.R    = 1023u;    // total, 1023 je zrejme spravne
   TIM2.EGR.B.UG = 1u;
   TIM2.CCMR1_Output.modify([] (TIM_CCMR1_Output_s & r) -> auto {
     r.B.OC1PE = 1u;
