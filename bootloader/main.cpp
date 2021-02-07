@@ -12,14 +12,20 @@ volatile unsigned g_usb_address_ready = 0u;
 static GpioClass LedGreen (GpioPortA, 10);
 static GpioClass LedRed   (GpioPortA,  8);
 
+static GpioClass NoFile   (GpioPortA, 1, GPIO_Mode_IN);
+static GpioClass NoUSB    (GpioPortA, 3, GPIO_Mode_IN);
+static GpioClass NoWrite  (GpioPortA, 2, GPIO_Mode_IN);
+
 extern "C" void BootFromRam ();
 extern "C" void SysTick_Handler () {
   g_ticks += 1;
 }
 static bool WaitUsbReady () {
+  if (!NoUSB.get() or !NoFile.get()) return false;
+  g_ticks = 0u;
   for (;;) {
-    if (g_usb_address_ready)   return true;
-    if (g_ticks > usb_timeout) return false;
+    if (g_usb_address_ready)         return true;
+    if (g_ticks > usb_timeout)       return false;
     asm volatile("wfi");
   }
 }
@@ -44,6 +50,16 @@ static void StopPeripherals () {
   RCC.AHB2ENR. B.GPIOBEN = 0u;
 }
 static constexpr unsigned RAM_BEGIN = 0x20000000;
+static bool MainBootProcess () {
+  bool result = false;
+  // na začátku RAM musí být nějaká "rozumná" hodnota SP
+  const uint32_t * stack = reinterpret_cast<const uint32_t*>(RAM_BEGIN);
+  const uint32_t   value = * stack;
+  if ((value <= RAM_BEGIN) or (value > (RAM_BEGIN + 0x28000))) return result;
+  StopPeripherals();
+  BootFromRam    ();
+  return true; // no return;
+}
 static bool BootFromFile (const char * name, const uint32_t len) {
   bool result = false;
   FIL handle;
@@ -52,17 +68,14 @@ static bool BootFromFile (const char * name, const uint32_t len) {
   unsigned readen = 0;
   if (f_read (&handle, data, len, & readen) != FR_OK)         return result;
   f_close (&handle);
-  // na začátku RAM musí být nějaká "rozumná" hodnota SP
-  const uint32_t * stack = reinterpret_cast<const uint32_t*>(RAM_BEGIN);
-  const uint32_t   value = * stack;
-  if ((value <= RAM_BEGIN) or (value > (RAM_BEGIN + 0x28000))) return result;
-  result = true;
-  StopPeripherals();
-  BootFromRam    ();
-  return result;
+  result = MainBootProcess();
+  return result;  // ok no return
 }
 static  FATFS fatfs;
 static bool StartBootProcess () {
+  if (!NoFile.get()) {
+    return MainBootProcess();  // ok no return
+  }
   +LedGreen;
   const int pathlen = 64;
   char path [pathlen];
@@ -97,6 +110,10 @@ static bool StartBootProcess () {
   f_closedir(&dir);
   return result;
 }
+static void wait_ms (const unsigned ms = 5u) {
+  g_ticks = 0u;
+  while (g_ticks < ms);
+}
 
 static usbd_device   udev;
 static MsClass       umsc (udev);
@@ -104,9 +121,13 @@ static StorageSpiNor disc;
 
 int main (void) {
   EnableDebugOnSleep();
+  NoFile .setPuPd (GPIO_PuPd_UP);
+  NoUSB  .setPuPd (GPIO_PuPd_UP);
+  NoWrite.setPuPd (GPIO_PuPd_UP);
   SysTick_Config (SystemCoreClock / 1000);
+  wait_ms ();
   udev.attach(umsc);
-  umsc.attach(disc/*, true*/);
+  umsc.attach(disc, ! NoWrite.get());
   umsc.init();
   if (!WaitUsbReady()) {
     // disable SysTick + interrupt
