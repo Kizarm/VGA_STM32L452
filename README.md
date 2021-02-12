@@ -57,4 +57,8 @@ To je jen taková blbina, ale zajímavě vypadá. Čte to napětí na PA2 a zobr
 Má to FIR filtr, který napodobí kývání ručičky. Nastavovat tím nějakou veličinu je opravdu
 příjemnější než při použití digitálního měřidla.
 
+## TRNG
+Protože hardware má vyvedeno USB a procesor obsahuje docela dobrý generátor náhodných
+čísel, byla škoda to nějak nevyužít. Popis má vlastní README.md v adresáři TRNG.
+
 TODO: Textový displej něco jako VT52.

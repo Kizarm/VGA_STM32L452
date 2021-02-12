@@ -1,0 +1,141 @@
+diff -Naurw ./old/rngd.c ./new/rngd.c
+--- ./old/rngd.c	2020-02-21 18:21:26.000000000 +0100
++++ ./new/rngd.c	2020-02-21 18:35:33.554954124 +0100
+@@ -152,6 +152,7 @@
+ 	ENT_NISTBEACON,
+ 	ENT_JITTER,
+ 	ENT_PKCS11,
++  ENT_KIZARM,
+ 	ENT_MAX
+ } entropy_indexes __attribute__((used));
+ 
+@@ -330,6 +331,16 @@
+ #endif
+ 		.rng_options	= pkcs11_options,
+ 	},
++  {
++    .rng_name = "KIZARM RNG Device",
++    .rng_sname  = "kizarm",
++    .rng_fname      = "/dev/serial/by-id/usb-Kizarm_Labs._USB_Serial_convertor_0001-if00",
++    .rng_fd         = -1,
++    .flags    = { 0 },
++    .xread          = xread,
++    .init           = init_entropy_source_kizarm,
++    .rng_options  = NULL,
++  },
+ };
+ 
+ static int find_ent_src_idx_by_sname(const char *sname)
+diff -Naurw ./old/rngd_entsource.c ./new/rngd_entsource.c
+--- ./old/rngd_entsource.c	2020-02-21 18:21:26.000000000 +0100
++++ ./new/rngd_entsource.c	2020-02-21 18:36:54.971588904 +0100
+@@ -201,6 +201,69 @@
+ 	ent_src->fipsctx = malloc(sizeof(fips_ctx_t));
+ 	return 0;
+ }
++#include <termios.h>
++
++int init_entropy_source_kizarm (struct rng *ent_src) {
++  struct sysfs_attribute *rngavail;
++  char buf[16];
++
++  ent_src->rng_fd = open (ent_src->rng_fname, O_RDONLY | O_NOCTTY);
++  if (ent_src->rng_fd == -1) {
++    message_entsrc (ent_src,LOG_DAEMON|LOG_DEBUG, "Unable to open file: %s\n", ent_src->rng_fname);
++    return 1;
++  }
++
++  struct termios LineFlags;
++  int attr = tcgetattr (ent_src->rng_fd, &LineFlags);
++  if (attr) {
++    message_entsrc (ent_src,LOG_DAEMON|LOG_DEBUG, "Unable to set attribute file: %s\n", ent_src->rng_fname);
++    close (ent_src->rng_fd);
++    return 1;
++  }
++  // nastaveni komunikacnich parametru do struct termios
++  LineFlags.c_iflag = IGNPAR;           // ignoruj chyby parity
++  LineFlags.c_oflag = 0;                // normalni nastaveni
++  LineFlags.c_cflag = CS8 | CREAD | CLOCAL; // 8-bit, povol prijem
++  LineFlags.c_lflag = 0;                // Raw input bez echa
++  LineFlags.c_cc [VMIN]  = 1;           // minimalni pocet znaku pro cteni
++  LineFlags.c_cc [VTIME] = 1;           // read timeout 0.1 s
++
++  tcsetattr (ent_src->rng_fd, TCSANOW, &LineFlags);
++  fcntl     (ent_src->rng_fd, F_SETFL, 0);
++  
++  /* Try to read some data from the entropy source.  If it doesn't return
++   * an error, assume its ok to use
++   */
++  if (ent_src->xread (buf, sizeof (buf), ent_src) == 0)
++    goto source_valid;
++
++  /* RHEL7: since /dev/hwrng will exist now even if there isn't an rng backing it,
++   * check to see if rng_available is empty, and return error if it is.
++   */
++  rngavail = sysfs_open_attribute (RNG_AVAIL);
++  if (!rngavail) {
++    message_entsrc (ent_src,LOG_DAEMON|LOG_DEBUG, "Unable to open sysfs attribute: %s\n", RNG_AVAIL);
++    return 1;
++  }
++
++  if (sysfs_read_attribute (rngavail)) {
++    message_entsrc (ent_src,LOG_DAEMON|LOG_DEBUG, "Error reading sysfs attribute: %s\n", RNG_AVAIL);
++    sysfs_close_attribute (rngavail);
++    return 1;
++  }
++
++  if (strncmp (rngavail->value, "\n", 1) == 0) {
++    message_entsrc (ent_src,LOG_DAEMON|LOG_DEBUG, "no available rng device\n");
++    sysfs_close_attribute (rngavail);
++    return 1;
++  }
++  sysfs_close_attribute (rngavail);
++
++source_valid:
++  /* Bootstrap FIPS tests */
++  ent_src->fipsctx = malloc (sizeof (fips_ctx_t));
++  return 0;
++}
+ 
+ /*
+  * Open tpm entropy source, and initialize it
+diff -Naurw ./old/rngd_entsource.h ./new/rngd_entsource.h
+--- ./old/rngd_entsource.h	2020-02-21 18:21:26.000000000 +0100
++++ ./new/rngd_entsource.h	2020-02-21 18:37:28.715792627 +0100
+@@ -36,6 +36,7 @@
+  * sourcedev is the path to the entropy source
+  */
+ extern int init_entropy_source(struct rng *);
++extern int init_entropy_source_kizarm(struct rng *);
+ #ifdef HAVE_RDRAND
+ extern int init_drng_entropy_source(struct rng *);
+ #endif
+diff -Naurw ./old/rngd_linux.c ./new/rngd_linux.c
+--- ./old/rngd_linux.c	2020-02-21 18:21:26.000000000 +0100
++++ ./new/rngd_linux.c	2020-02-21 18:26:42.530756740 +0100
+@@ -150,8 +150,10 @@
+ 				ent->ent_count = 0;
+ 			}
+ 		}
+-	} else
+-		write(random_fd, buf, size);
++	} else {
++		int wrb = write(random_fd, buf, size);
++    (void) wrb;
++  }
+ 
+ 	return ent->ent_count; 
+ 
+diff -Naurw ./old/rngd_rdrand.c ./new/rngd_rdrand.c
+--- ./old/rngd_rdrand.c	2020-02-21 18:21:26.000000000 +0100
++++ ./new/rngd_rdrand.c	2020-02-21 18:27:15.594190631 +0100
+@@ -338,7 +338,8 @@
+ 
+ 	fd = open("/dev/urandom", O_RDONLY);
+ 	if (fd >= 0) {
+-		read(fd, key, sizeof key);
++		int rdb = read(fd, key, sizeof key);
++    (void) rdb;
+ 		close(fd);
+ 	}
+ 
