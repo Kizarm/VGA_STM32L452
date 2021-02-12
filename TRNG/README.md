@@ -22,7 +22,7 @@ Daemon pro použití STM32 RNG přes USB pro zvýšení entropie /dev/random.
 Kód je převzat bez větších změn z [githubu](https://github.com/nhorman/rng-tools),
 je vyházeno skoro vše, co není potřeba. Je nutná knihovna libcrypto a libsysfs.
 Původní démon s USB jako /dev/ttyACMx funguje (parametr -r), ale bylo
-by nutné předem totomuto zařízení správně nastavit parametry, takže zde
+by nutné předem tomuto zařízení správně nastavit parametry, takže zde
 je to doplněno přímo do kódu, zařízení je pak
 "/dev/serial/by-id/usb-Kizarm_Labs._USB_Serial_convertor_0001-if00", takže
 nezávisí na pořadí zapojení do USB. Funkce init_entropy_source_kizarm() jej
