@@ -61,4 +61,25 @@ příjemnější než při použití digitálního měřidla.
 Protože hardware má vyvedeno USB a procesor obsahuje docela dobrý generátor náhodných
 čísel, byla škoda to nějak nevyužít. Popis má vlastní README.md v adresáři TRNG.
 
-TODO: Textový displej něco jako VT52.
+## VT100
+Textový displej podobný VT100. Escape sekvence jsou dost zjednodušené, stejně tak kódy klávesnice.
+Default se to navenek chová jako USB CDC zařízení, ale je možné použít jako vstup/výstup USART,
+jehož piny TxD (PA2) a RxD (PA3) jsou vyvedeny na konektor. Provedeme to příkazy
+```
+make clean
+patch -p2 < usart.patch
+make
+```
+Funguje to dobře např. pokud to použijeme jako konzoli v simulaci [historických počítačů](https://github.com/simh/simh),
+kde jdou data na konzoli relativně pomalu. Jako konzole linuxu pomocí getty USB CDC dělá neplechu - dat
+přichází moc najednou a displej problikává, protože mu vypadne synchonizace. Umravnit to by bylo moc práce.
+USART použitelný vcelku je, ale zase - Linux používá i escape sekvence, které nejsou implemetovány. A další
+věcí je, že formát obrazovky je jiný než u původního VT100. V podstatě jsem to dělal jen proto,
+aby mi v simulaci PDP11 s OS RSX11M běželo RMD. Prostě vzpomínky na svět SMEP. Ono to nezaškodí podívat
+se těch pár desítek let zpátky - člověk si uvědomí jak se od té doby zlepšil komfort práce s počítačem.
+A zároveň jak málo se změnily základní principy - i tam bylo C-čko, textový editor a příkazová řádka
+s nějakým procesorem (možnost skriptování příkazů). RSX11M byl první OS hodný toho jména se kterým jsem
+se setkal, měli jsme tu výhodu, že už tenkrát jsme mohli používat originální verzi, kerá se dnes dá sehnat
+na Internetu. Jen se tehdy nedalo používat C-čko, většina programů se vytvářela v assembleru, dal se používat
+Fortran a Basic. C-čkový překladač nebyl a ten co je pro RSX11M dnes dostupný na webu je stejně primitivní,
+ne tak propracovaný jako Fortran. C-čko se prostě začalo rozvíjet až s příchodem UNIXu.

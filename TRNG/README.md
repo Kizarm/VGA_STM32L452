@@ -1,4 +1,4 @@
-## TRNG - využití hardwarového generátoru náhodných čísel.
+# TRNG - využití hardwarového generátoru náhodných čísel.
 
 Kdo generoval kryptografické klíče na Linuxu, ví že to může dlouho trvat.
 Je to tím, že ta opravdu náhodná čísla musíme číst z /dev/random což je závislé
@@ -9,13 +9,13 @@ výrobci čipů začali tuto část hardware implementovat (trochu jiným způso
 přímo do SoC, takže další hardware není nutný. Další výhodou je, že tyto tzv.
 TRNG jsou většinou již nějakým způsobem certifikovány (NIST...).
 
-# Adresář source.
+## Adresář source.
 
 Firmware, který čte náhodná čísla z vestavěného TRNG a posílá je na USB.
 Z hlediska USB se to pak chová jako standardní sériový port (ACM). Popravdě
 by na to stačil holý čip + zdroj 3.3V připojený k USB.
 
-# Adresář rngd.
+## Adresář rngd.
 
 Daemon pro použití STM32 RNG přes USB pro zvýšení entropie /dev/random.
 
@@ -46,7 +46,7 @@ Pozn. Ty testy (z části psané v asm) vyházet nejde, démon je používá aby
 zda dané zařízení může skutečně použít jako zdroj entropie.
 Co bylo upraveno viz rng-util.patch.
 
-# Adresář double-split.
+## Adresář double-split.
 
 Na závěr nesmí chybět blbina. Tento firmware používá výstup VGA a na obrazovce
 postupně vykresluje interferenční obrazec jaký by vznikl při dvouštěrbinovém experimentu
