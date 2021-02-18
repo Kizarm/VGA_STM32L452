@@ -109,9 +109,9 @@ static inline void AdcInit () {
   });
   // doby vzorkování
   ADC.SMPR1.modify([](ADC_SMPR1_s & r) -> auto {
-    r.B.SMP1 = 6u;
-    r.B.SMP2 = 6u;
-    r.B.SMP3 = 6u;
+    r.B.SMP0 = 6u;
+    r.B.SMP7 = 6u;
+    r.B.SMP8 = 6u;
     return r.R;
   });
   ADC.CFGR.modify ([](ADC_CFGR_s & r) -> auto {

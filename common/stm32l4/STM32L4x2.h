@@ -13302,7 +13302,7 @@ struct ADC_SMPR1_s { /*!< sample time register 1 */
   union {
       __RWB uint32_t R;
     struct {
-            uint32_t unused0          :  3;
+      __RWB uint32_t SMP0             :  3; /*!< Ofs=0, w=3 SMP0 */
       __RWB uint32_t SMP1             :  3; /*!< Ofs=3, w=3 SMP1 */
       __RWB uint32_t SMP2             :  3; /*!< Ofs=6, w=3 SMP2 */
       __RWB uint32_t SMP3             :  3; /*!< Ofs=9, w=3 SMP3 */
