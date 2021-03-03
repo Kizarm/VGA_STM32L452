@@ -46,9 +46,19 @@ Pozn. Ty testy (z části psané v asm) vyházet nejde, démon je používá aby
 zda dané zařízení může skutečně použít jako zdroj entropie.
 Co bylo upraveno viz rng-util.patch.
 
-## Adresář double-split.
+## Adresář double_split.
 
 Na závěr nesmí chybět blbina. Tento firmware používá výstup VGA a na obrazovce
 postupně vykresluje interferenční obrazec jaký by vznikl při dvouštěrbinovém experimentu
 s jednotlivými částicemi. Rychlost "vystřelování" částic je možné regulovat
 napětím na PA2. Je z něj docela dobře vidět, že generátor je opravdu náhodný.
+
+## Adresář chaos_game
+
+I tohle je blbina. K vykreslení fraktálu se používá postupné aplikace několika
+afinních transformací bodu s náhodným výběrem té právě použité. Součet pravděpodobností
+všech používaných transformací je roven 1. Vybrány byly transformace pro Barnsleyho kapradí
+a Sierpińského trojúhelník. Použitý fraktál je vybrán na začátku opět náhodným výběrem.
+Je na tom vidět, že i dosti jednoduchá matematika může vytvářet složité obrazce a chování
+je naprosto neintuitivní.
+
