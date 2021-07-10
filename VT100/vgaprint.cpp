@@ -36,6 +36,7 @@ bool VgaPrint::position (const char c) { // return true, pokud se ma vykreslit
         return false;
       } else break;
     case ESCAPE_ESCAPE:
+      _formatValue = 0; _fmtPosX = 0; _fmtPosY = 0;
       if      (c == '[') esc_seq = ESCAPE_FORMAT;
       else if (c == '(') esc_seq = ESCAPE_RESET_FONT;
       else if (c == ')') esc_seq = ESCAPE_RESET_FONT;
