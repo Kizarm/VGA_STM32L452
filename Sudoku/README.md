@@ -1,4 +1,4 @@
-#Sudoku
+# Sudoku
 
 Algoritmus této hry je poměrně jednoduchý, ale vyžaduje rekurzi. Když už
 máme něco, na čem to jde vyzkoušet, tak proč ne. Kolik sežere rekurze
