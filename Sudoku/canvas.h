@@ -50,7 +50,7 @@ class Canvas {
   Indicator blink;
   Sudoku &  sudoku;
   const int width, bwidth, height;
-  bool      current, stop;
+  bool      current, stop, manual;
   Matrix    matrix;
   uint8_t * data;
   real      position;
@@ -58,14 +58,14 @@ class Canvas {
   public:
 #ifdef __arm__
     Canvas (Sudoku & s, const int w, const int h, uint8_t * p) : blink(), sudoku (s), width(w), bwidth(w >> 3), height(h),
-      current (true), stop (false), matrix (1.0f, 0.0f, 0.0f, -1.0f, 0.5f * (real) width, 0.5f * (real) (height)) {
+      current (true), stop (false), manual (false), matrix (1.0f, 0.0f, 0.0f, -1.0f, 0.5f * (real) width, 0.5f * (real) (height)) {
       data = p;
       position = 0.0f;
       cursor   = 0;
     }
 #else
     Canvas (Sudoku & s, const int w, const int h, uint8_t * p = nullptr) : blink(), sudoku (s), width(w), bwidth(w >> 3), height(h),
-      current (true), stop (false), matrix (1.0f, 0.0f, 0.0f, -1.0f, 0.5f * (real) width, 0.5f * (real) (height)) {
+      current (true), stop (false), manual (false), matrix (1.0f, 0.0f, 0.0f, -1.0f, 0.5f * (real) width, 0.5f * (real) (height)) {
       (void) p;
       data = new uint8_t [bwidth * height];
       position = 0.0f;
@@ -93,6 +93,8 @@ class Canvas {
     void number    (const int n);
     void enter     ();
     void backup    ();
+    void set_new   ();
+    void solve     ();
   protected:
     void setAt     (const FPoint p , const bool c = true) {
       setAt ((int) mroundf (p.x), (int) mroundf (p.y), c);

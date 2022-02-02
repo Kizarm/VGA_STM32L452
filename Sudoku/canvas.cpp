@@ -115,6 +115,7 @@ void Canvas::rects (const unsigned int s, const unsigned int w) {
   }
 }
 void Canvas::check() {
+  if (manual) return;
   const value_t k = sudoku.find_min();
   pos   (cursor, false);
   setColor (true);
@@ -124,6 +125,7 @@ void Canvas::check() {
   }
   pos   (k);
   cursor = k;
+  
   Possible p (cursor);
   help  (p);
   int u = -1;
@@ -149,6 +151,25 @@ void Canvas::drawings() {
   grid  ();
   check ();
 }
+void Canvas::set_new() {
+  if (manual) {
+     value_t * const g = sudoku.getGrid();
+     g [cursor] = -1;
+     square (cursor);
+    return;
+  }
+  manual = true;
+  stop   = false;
+  sudoku.clear ();
+  fill (false);
+  Matrix m (1.0f, 0.0f, 0.0f, -1.0f, 3.0f, height - 3.0f);
+  setMatrix(m);
+  rects (1u);
+  rects (3u, 6u);
+  cursor = 0;
+  pos (cursor);
+}
+
 void Canvas::backup() {
   if (!stop) return;
   stop = false;
@@ -240,10 +261,15 @@ void Canvas::arrow (const ARROWS a) {
   pos (cursor, false);
   pos (npos);
   cursor = npos;
+  if (manual) {
+    square (cursor);
+    return;
+  }
   Possible p (cursor);
   help (p);
 }
 void Canvas::enter() {
+  if (manual) manual = false;
 #if DIFICULT > 1
   return;              // Vypnutí klávesy enter - 2. zobtížnění hry
 #endif
@@ -272,5 +298,13 @@ void Canvas::number (const int k) {
     gover ();          // Skonči po špatném doplnění 3. zobtížnění hry
 #endif
   }
+}
+void Canvas::solve() {
+  if (stop)   return;
+  if (manual) return;
+  if (sudoku.solve()) {
+    grid ();
+  }
+  gover();
 }
 

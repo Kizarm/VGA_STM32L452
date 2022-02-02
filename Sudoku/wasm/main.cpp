@@ -37,6 +37,14 @@ class ImageWrap {
       canvas.backup ();
       ShowImg ();
     }
+    void      Delete () {
+      canvas.set_new ();
+      ShowImg ();
+    }
+    void      End    () {
+      canvas.solve ();
+      ShowImg ();
+    }
     void      Save   () {
       sudoku.save ();
     }
@@ -95,6 +103,12 @@ void Escape () {
 void Backspace () {
   if (image) image->Backspace();
 }
+void Delete () {
+  if (image) image->Delete();
+}
+void End () {
+  if (image) image->End();
+}
 void Arrow (const int n) {
   ARROWS a = static_cast<ARROWS>(n);
   if (image) image->Arrow(a);
@@ -115,4 +129,6 @@ EMSCRIPTEN_BINDINGS (my_bind) {
   emscripten::function ("Arrow",       Arrow);
   emscripten::function ("Number",      Number);
   emscripten::function ("Save",        Save);
+  emscripten::function ("End",         End);
+  emscripten::function ("Delete",      Delete);
 }

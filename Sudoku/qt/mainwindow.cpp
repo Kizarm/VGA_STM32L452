@@ -67,6 +67,14 @@ void MainWindow::keyAction (int n) {
   const Qt::Key k = (Qt::Key) n;
   ARROWS arr = NO_KEY;
   switch (k) {
+    case Qt::Key_End    :
+      canvas.solve    ();
+      ShowImage();
+      return;
+    case Qt::Key_Delete :
+      canvas.set_new  ();
+      ShowImage();
+      return;
     case Qt::Key_Escape :
       canvas.drawings ();
       ShowImage();

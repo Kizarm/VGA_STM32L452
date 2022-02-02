@@ -69,11 +69,12 @@ class Sudoku {
     void       save     () {
       for (unsigned n=0; n<SUDSQR; n++) back [n] = grid [n];
     }
+    void       clear    ();
+    bool       solve    () { return solve (grid, false); }
   protected:
-    void        uniq     (value_t * const data, int & sol);
-    bool        solve    (value_t * const data, const bool rnd = false);
-    bool        not_used (const value_t * const data, const unsigned n, const index_t value) const;
-    void        clear    ();
+    void       uniq     (value_t * const data, int & sol);
+    bool       solve    (value_t * const data, const bool rnd = false);
+    bool       not_used (const value_t * const data, const unsigned n, const index_t value) const;
 };
 
 #endif // SUDOKU_H

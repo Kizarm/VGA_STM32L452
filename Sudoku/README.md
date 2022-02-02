@@ -23,6 +23,12 @@ jeden člověk hru napsal a zároveň i s chutí hrál. Ale jsou k tomu zdroják
 a poznámky v souboru canvas.cpp umožní upravit hru tak, aby u toho bylo
 nutné přemýšlet.
 
+Přidal jsem ještě klávesu DELETE, která vytvoří prázdné pole a přepne hru
+do módu editace, kdy jdou zadávat do buněk číslice. V tomhle módu pak tato
+klávesa číslo vymaže (nelze jej jednoduše přepsat, číslice se kontrolují).
+Mód editace se ukončí klávesou ENTER. Klávesa END hru celou vyřeší.
+Pak to celé funguje jako pomůcka pro řešení sudoku z externího zdroje.
+
 Na závěr ještě malá poznámka. Tahle hra se objevovala i na osmibitových
 počítačích v počátcích mikroprocesorové éry. Rekurzívní algoritmus použitý
 zde by na tomhle železe asi neběžel. Je však možné vygenerovat jednoznačně

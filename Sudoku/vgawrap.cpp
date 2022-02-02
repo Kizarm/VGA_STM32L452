@@ -11,7 +11,13 @@ void VgaWrap::pass() {
     ARROWS arr = NO_KEY;
     int    res = 0;
     switch (code) {
-      case SDL_SCANCODE_BACKSPACE:
+      case SDL_SCANCODE_END :
+        canvas.solve ();
+        return;
+      case SDL_SCANCODE_DELETE :
+        canvas.set_new ();
+        return;
+      case SDL_SCANCODE_BACKSPACE :
         canvas.backup   ();
         return;
       case SDL_SCANCODE_ESCAPE :
