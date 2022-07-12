@@ -84,7 +84,7 @@ CFLAGS += -c -Wall -g
 CFLAGS += -ffunction-sections -fdata-sections
 # pro C++ nutno ještě vypnout obsluhu výjimek (v C taky i když je to jedno)
 CFLAGS += -fno-exceptions
-CFLAGS += -fshort-wchar
+CFLAGS += -fno-short-wchar
 # 2. Linker
 # Vytvořit mapu rozvržení paměti, křížové reference
 LDFLAGS+= -Map=$(@:%.elf=%.map) --cref

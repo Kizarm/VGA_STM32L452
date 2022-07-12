@@ -18,4 +18,23 @@ hardware/VgaOnSTM32L452.bak
 hardware/VgaOnSTM32L452.kicad_pcb-bak
 hardware/VgaOnSTM32L452.net
 hardware/sym-lib-table
+PMD85/bin/
+PMD85/devel/.qmake.stash
+PMD85/devel/Makefile
+PMD85/devel/moc/
+PMD85/devel/qrc_src.cpp
+PMD85/devel/ui_mainwindow.h
+Sudoku/qt/.qmake.stash
+Sudoku/qt/Makefile
+Sudoku/qt/bin/
+Sudoku/qt/moc/
+Sudoku/qt/qrc_src.cpp
+Sudoku/qt/ui_mainwindow.h
+Sudoku/wasm/sudoku.js
+Sudoku/wasm/sudoku.wasm
+TRNG/double_split/table.c
+TRNG/double_split/table.h
+TRNG/rngd/rngd
+common/stm32l4/ld/libusb.a
+hardware/fp-info-cache
 

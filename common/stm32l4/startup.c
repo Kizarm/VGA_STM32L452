@@ -236,10 +236,11 @@ void (* const Vectors[]) (void) = {
   I2C4_ER_IRQHandler,
 
 };
+/// workaround for new gcc
+#pragma GCC diagnostic ignored "-Warray-bounds"
 static inline void fillStack (void) {
-  register unsigned int *dst, *end;
-  dst = &_ebss;
-  end = &_estack - 1u;
+  unsigned int *dst = &_ebss;
+  const unsigned int *end = &_estack - 1u;
   while (dst < end) *dst++ = 0xDEADBEEFU;
 }
 void Reset_Handler (void) {

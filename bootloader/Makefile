@@ -2,10 +2,12 @@
 # Uživatelské definice - pro dané nastavení zde lze vytvořit projekt
 # jednoduše tak, že zadáme jméno výstupu a vstupní objekty.
 ##########################################################################
+# VPATH je cesta ke zdrojovým souborům, zde jen hlavní adresář
 TARGET = stm32l4
+VPATH = . ./common ./common/$(TARGET) ./common/usb
 OUTPUT = bootloader
 # S/C/C++ files
-SOURCES+= main.cpp
+SOURCES = main.cpp
 SOURCES+= spiclass.cpp serialflash.cpp storagespinor.cpp
 SOURCES+= msc_class.cpp
 SOURCES+= usbd_core.cpp
@@ -18,8 +20,6 @@ SOURCES+= strings.c
 SOURCES+= startup.c system.cpp
 ##########################################################################
 BLD = ./build/
-# VPATH je cesta ke zdrojovým souborům, zde jen hlavní adresář
-VPATH = . ./common ./common/usb ./common/$(TARGET)
 # A cesty k hlavičkám
 INCLUDE_PATHS = . ./common ./common/usb ./common/$(TARGET) ./common/cmsis
 ##########################################################################
@@ -34,12 +34,12 @@ INCLUDE_PATHS = . ./common ./common/usb ./common/$(TARGET) ./common/cmsis
 
  CROSS_COMPILE = arm-none-eabi-
 # Můžeme zkusit použít i clang - pak COMPILER = clang
-COMPILER = 
+COMPILER =
 ifeq ($(COMPILER),clang)
 # Pro clang je lépe nastavit vyšší optimalizaci, -fshort-enums je kvůli kompatibititě s ld.
 # Ta verze clang-3.x jako příkaz je z Ubuntu, prostě to tak vymysleli, tak to nechme
 # Pozor různé verze mají odlišné přepínače cílové architektury (-target) !!!
-CLVER =-3.8
+CLVER =
 CC  = clang$(CLVER)
 CXX = clang++$(CLVER)
 CFLAGS += --target=thumbv7em-none-eabi -mfloat-abi=soft -fshort-enums -Oz
@@ -78,7 +78,7 @@ CFLAGS += -Wa,-adhlns=$(@:%.o=%.lst)
 endif
 #CFLAGS += $(MFLAGS)
 # přelož, všechna varování, debug info
-CFLAGS += -c -Wall -g -fshort-wchar
+CFLAGS += -c -Wall -g -fno-short-wchar
 # Umístit kód funkcí i proměnné do zvláštních sekcí
 CFLAGS += -ffunction-sections -fdata-sections
 # pro C++ nutno ještě vypnout obsluhu výjimek (v C taky i když je to jedno)

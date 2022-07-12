@@ -5,7 +5,7 @@ VPATH  = ./ ../ ../common/
 CFLAGS = -c -Wall -O3 -I../
 LFLAGS = -O3 --bind -s WASM=1 -s ALLOW_MEMORY_GROWTH=1
 #LFLAGS+= -s ASSERTIONS=1
-LFLAGS+= -s EXTRA_EXPORTED_RUNTIME_METHODS=['addOnPostRun']
+LFLAGS+= -s EXPORTED_RUNTIME_METHODS=['addOnPostRun']
 
 SOURCES  = main.cpp
 SOURCES += fmath.cpp

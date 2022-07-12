@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import matplotlib.pyplot as plt
 import math
@@ -46,7 +46,7 @@ def exponential ():
     w  = int (round (q * 1024.0))
     r.append (q)
     p *= q
-  print "p={0:f}".format(p)
+  print ("p={0:f}".format(p))
   return r
 
 def cplusplus (inst):

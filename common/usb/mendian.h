@@ -11,10 +11,12 @@
 #endif // __GNUC__
 #if __GNUC_MINOR__ < 8
 #ifndef __clang__
+/*
 /// V nizsich verzich gcc neni 16.bit swap builtin
 static volatile uint16_t __builtin_bswap16 (uint16_t n) {
   return ((n >> 8) & 0x00FF) | ((n << 8) & 0xFF00);
 }
+*/
 #endif // clang
 #endif // __GNUC_MINOR__
 // __builtin_bswapNN jsou interní makra překladače, správně definované

@@ -63,7 +63,7 @@ CFLAGS += -Wa,-adhlns=$(@:%.o=%.lst)
 endif
 #CFLAGS += $(MFLAGS)
 # přelož, všechna varování, debug info
-CFLAGS += -c -Wall -g -fshort-wchar
+CFLAGS += -c -Wall -g -fno-short-wchar
 # Umístit kód funkcí i proměnné do zvláštních sekcí
 CFLAGS += -ffunction-sections -fdata-sections
 # pro C++ nutno ještě vypnout obsluhu výjimek (v C taky i když je to jedno)
