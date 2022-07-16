@@ -16,7 +16,7 @@ SOURCES+= gpio.cpp
 SOURCES+= ff.c diskopsbase.cpp
 #SOURCES+= usart.cpp
 SOURCES+= boot.s
-SOURCES+= strings.c
+SOURCES+= strings.cpp
 SOURCES+= startup.c system.cpp
 ##########################################################################
 BLD = ./build/

@@ -150,13 +150,13 @@ static const struct cdc_config config_desc = {
 };
 template<const unsigned N> struct w_text {
   uint8_t       len, typ;
-  const wchar_t str [N];
+  const char16_t str [N];
 }__attribute__((packed));
 
-#define WSTR1 (L"Kizarm Labs.")
-#define WSTR2 (L"USB Serial convertor")
-#define WSTR3 (L"0001")
-#define WSTR4 (L"USB <=> USART")
+#define WSTR1 (u"Kizarm Labs.")
+#define WSTR2 (u"USB Serial convertor")
+#define WSTR3 (u"0001")
+#define WSTR4 (u"USB <=> USART")
 
 static const uint8_t str_0[] =  {0x04,0x03,0x09,0x04};
 static const w_text<(sizeof WSTR1 >> 1u)> str_1 = {sizeof (str_1) - 2u, USB_DTYPE_STRING, {WSTR1}};

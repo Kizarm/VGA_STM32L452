@@ -39,7 +39,7 @@ static const unsigned char UsbConfigDescriptor [] __attribute__((aligned(4))) = 
 };
 /** **************************************************/
 
-extern "C" const struct usb_string_descriptor * const dtable[];
+extern const usb_string_descriptor * const dtable[];
 
 /** **************************************************/
 
