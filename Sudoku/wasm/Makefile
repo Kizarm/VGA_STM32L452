@@ -1,32 +1,39 @@
-PR = sudoku.js
-CC = emcc
-CXX= em++
-VPATH  = ./ ../ ../common/
-CFLAGS = -c -Wall -O3 -I../
-LFLAGS = -O3 --bind -s WASM=1 -s ALLOW_MEMORY_GROWTH=1
-#LFLAGS+= -s ASSERTIONS=1
-LFLAGS+= -s EXPORTED_RUNTIME_METHODS=['addOnPostRun']
+PR = bin/sudoku.wasm
+VPATH = ./ ../ ../common/
+CC = clang
+CX = clang++
+# V Ubuntu 20.04 není v default LLVM wasm-ld, jinak by šlo použít clang jako ld
+LD = wasm-ld-10
+TARGET = --target=wasm32-unknown-unknown
 
-SOURCES  = main.cpp
-SOURCES += fmath.cpp
-SOURCES += canvas.cpp
-SOURCES += sudoku.cpp
-SOURCES += indicator.cpp
-SOURCES += Atari8x16SystemFont.c
+OBJS  = main.o
+OBJS += fmath.o
+OBJS += canvas.o
+OBJS += sudoku.o
+OBJS += indicator.o
+OBJS += Atari8x16SystemFont.o
 
-OBJB = $(basename  $(SOURCES))
-OBJS = $(addsuffix .o,$(OBJB))
+CFLAGS = -Wall -Oz -flto $(TARGET) -I. -I.. -I../common -I./lib
+CFLAGS+= -ffunction-sections -fdata-sections
+#CFLAGS+= -Wno-incompatible-library-redeclaration
+# Pro clang by muselo ještě přibýt -nostartfiles $(TARGET) a flagy by byly -Wl,
+LFLAGS = --no-entry --import-memory --lto-O3 --gc-sections
+LFLAGS+= --print-gc-sections
+#LFLAGS+= --export-all
+# vetsi stack znamena zvetsit i WebAssembly.Memory({ initial: n 64K block })
+LFLAGS+= -z stack-size=65536
+#LFLAGS+= --allow-undefined
+LFLAGS+= --allow-undefined-file=symbols.txt 
+LDLIBS = -L./lib -lWASM
 
 all: $(PR)
-
-$(PR): $(OBJS)
-	$(CXX) $(LFLAGS) $(OBJS) -o $(PR)
-
-%.o: %.c
-	$(CC) $(CFLAGS) $< -o $@
 %.o: %.cpp
-	$(CXX) -std=c++11 $(CFLAGS) $< -o $@
-
+	$(CX) -std=c++14 -c $(CFLAGS) -fno-exceptions -fno-rtti $< -o $@
+%.o: %.c
+	$(CC) -c $(CFLAGS) $< -o $@
+$(PR): $(OBJS) ./lib/libWASM.a
+	$(LD) $(LFLAGS) $(OBJS) -o $(PR) $(LDLIBS)
+./lib/libWASM.a:
+	cd ./lib && $(MAKE) all
 clean:
 	rm -f *.o
-#	rm $(PR) $(PR:%.js=%.wasm)

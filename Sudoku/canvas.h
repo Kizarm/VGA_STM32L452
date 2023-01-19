@@ -1,8 +1,7 @@
 #ifndef CANVAS_H
 #define CANVAS_H
-#include "fmath.h"
 #include <stdint.h>
-#include <stdlib.h>
+#include "fmath.h"
 #include "font.h"
 #include "sudoku.h"
 #include "indicator.h"

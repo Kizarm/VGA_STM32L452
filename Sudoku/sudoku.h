@@ -1,7 +1,9 @@
 #ifndef SUDOKU_H
 #define SUDOKU_H
-#ifdef __arm__
+#if defined __arm__
 #define printf(...)
+#elif defined __wasm__
+#include "libwasm.h"
 #else
 #include <stdio.h>
 #include <string>

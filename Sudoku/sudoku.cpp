@@ -1,11 +1,13 @@
 #include "sudoku.h"
-#ifdef __arm__
+#if defined __arm__
 #include "rngclass.h"
 static RngClass Generator;
 static inline unsigned rand () {
   return Generator.Read();
 }
-
+#elif defined __wasm__
+#include "libwasm.h"
+extern "C" int  IMPORT(GetTime) ();
 #else
 #include <stdlib.h>
 #include <time.h>
@@ -44,7 +46,10 @@ static bool findUnassigned (const value_t * const data, unsigned & n) {
 }
 /*********************************************************************/
 Sudoku::Sudoku (const bool rnd) noexcept : randomize(rnd), numberList (0) {
-#ifndef __arm__  
+#ifdef __wasm__
+  const int t = GetTime ();
+  srand (t);
+#elif !defined __arm__  
   const time_t t = time (nullptr);
   srand (t);
 #endif

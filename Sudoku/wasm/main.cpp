@@ -1,19 +1,31 @@
-#include <emscripten/bind.h>
-#include <emscripten.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-#include <vector>
-#include <string>
+#include "libwasm.h"
 #include "sudoku.h"
 #include "canvas.h"
 
-static void CallBack () {
-  EM_ASM ({
-    ReplotPass ();
-  });
+////////////////////////////////////////////////////////////////////////////////////
+extern "C" {
+  extern void __wasm_call_ctors();
+  extern char __data_end;
+  extern char __heap_base;
+  extern char __global_base;
+  extern char __memory_base;
+  extern char __table_base;
+  extern void IMPORT(ReplotPass)(const uint8_t * ptr, const int len);
+  extern void EXPORT(init)      (const int memlen);
+  extern void EXPORT(InitImage) ();
+  extern void EXPORT(Save)      ();
+  extern void EXPORT(Enter)     ();
+  extern void EXPORT(Escape)    ();
+  extern void EXPORT(Backspace) ();
+  extern void EXPORT(Delete)    ();
+  extern void EXPORT(End)       ();
+  extern void EXPORT(Arrow)     (const int);
+  extern void EXPORT(Number)    (const int);
+};
+void init (const int memlen) {
+  _HEAP_MAX = reinterpret_cast<char*> (memlen);   // před prvním voláním malloc() - může být i v konstruktorech
+  __wasm_call_ctors();                            // nutné volání statických konstruktorů pokud máme statické třídy
 }
-
 class ImageWrap {
   const int  width, height, screen_size;
   uint32_t * idata;
@@ -79,18 +91,18 @@ void ImageWrap::ShowImg() {
     if (pix & (1 << xn)) pdata [n] = 0xFF00FF00u;
     else                 pdata [n] = 0xFF000000u;
   }
-  CallBack();
+  ReplotPass(getData(), getSize());
 }
 
 static ImageWrap * image = nullptr;
 
 /*********************************************************************************/
 
-void Init () {
+void InitImage () {
   if (image) { delete image; image = nullptr; }
   image = new ImageWrap ();
+  // printf("ptr = %p\n", image);
 };
-
 void Save () {
   if (image) image->Save();
 }
@@ -117,18 +129,3 @@ void Number (const int n) {
   if (image) image->Number (n);
 }
 
-emscripten::val fg_data () {
-  return emscripten::val (emscripten::typed_memory_view (image->getSize(), image->getData()));
-}
-EMSCRIPTEN_BINDINGS (my_bind) {
-  emscripten::function ("Init",        Init);
-  emscripten::function ("fg_data",     fg_data);
-  emscripten::function ("Enter",       Enter);
-  emscripten::function ("Escape",      Escape);
-  emscripten::function ("Backspace",   Backspace);
-  emscripten::function ("Arrow",       Arrow);
-  emscripten::function ("Number",      Number);
-  emscripten::function ("Save",        Save);
-  emscripten::function ("End",         End);
-  emscripten::function ("Delete",      Delete);
-}

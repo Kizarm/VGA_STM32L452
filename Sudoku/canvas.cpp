@@ -1,4 +1,6 @@
-#include <string.h>
+#ifndef __wasm__
+#include <cstring>
+#endif
 #include "canvas.h"
 
 void TextRectangle::show (const char * text, const FPoint & p, Canvas & cv, const unsigned int z) {
@@ -6,7 +8,7 @@ void TextRectangle::show (const char * text, const FPoint & p, Canvas & cv, cons
   xo = (int) mroundf (p.x), yo = (int) mroundf (p.y);
   for (int n=0; n<bw; n++) {
     const char cc = text [n];
-    const unsigned gi = (static_cast<const unsigned>(cc)) & 0x7F;
+    const unsigned gi = (static_cast<unsigned>(cc)) & 0x7F;
     const GLYPH_DESC * gd = glyph [gi];
     show (n << 3, gd, cv, z);
   }
