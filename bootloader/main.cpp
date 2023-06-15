@@ -91,7 +91,7 @@ static bool StartBootProcess () {
   int i = rl;
   path [i] = '\0';
   res = f_opendir (&dir, path);
-  if (res != FR_OK) return result;
+  if (res != FR_OK) return MainBootProcess();  // při chybě externí flash může skočit do programu, který je nahrán do RAM pomocí SVD
   FILINFO fno;
   for (;;) {
     res = f_readdir (&dir, &fno);
